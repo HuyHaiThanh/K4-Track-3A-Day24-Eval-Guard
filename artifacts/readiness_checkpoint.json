@@ -1,0 +1,136 @@
+{
+  "checked_date": "2026-10-12",
+  "timezone": "Asia/Saigon",
+  "run_kind": "offline_readiness",
+  "technical_readiness": "passed",
+  "team_assignment": "assigned_pending_member_readback",
+  "base_commit": "b9f8d5b53bc4f94899aa30fdc52c30be0e96eb6d",
+  "working_tree": "checkpoint captured before preparation commits; snapshot now committed",
+  "answers_sha256": "9b30fefda5717851744ff2ff4e59f51996158d1c8f3d38715d6abe7257728016",
+  "answers_unchanged_since_preclass": true,
+  "environment_check": {
+    "command": ".venv/Scripts/python.exe scripts/check_preclass.py",
+    "exit_code": 0,
+    "answers": 50,
+    "distributions": {
+      "factual": 20,
+      "multi_hop": 20,
+      "adversarial": 10
+    },
+    "llm_answers": 50,
+    "indexed_points": 125,
+    "all_contexts_are_original_corpus_substrings": true
+  },
+  "offline_tests": {
+    "command": ".venv/Scripts/python.exe -m pytest tests/ -q",
+    "exit_code": 1,
+    "passed": 71,
+    "failed": 24,
+    "deselected_integration": 3,
+    "support_passed": 69,
+    "student_passed": 2,
+    "student_failed": 24,
+    "per_phase": {
+      "a": {
+        "passed": 0,
+        "failed": 6
+      },
+      "b": {
+        "passed": 2,
+        "failed": 6
+      },
+      "c": {
+        "passed": 0,
+        "failed": 12
+      }
+    }
+  },
+  "support_tests": {
+    "command": ".venv/Scripts/python.exe -m pytest tests/ -m support -q",
+    "exit_code": 0,
+    "passed": 69,
+    "deselected": 29
+  },
+  "missing_experiment_artifacts": [
+    "ragas_50q.json",
+    "judge_results.json",
+    "guard_results.json"
+  ],
+  "limits": [
+    "Student failures are attributable to unchanged TODO/stub implementations.",
+    "Two student passes are coincidental stub-compatible cases, not completion evidence.",
+    "Live integration tests were not run; no API or generation batch was repeated.",
+    "Two scanned PDFs still require OCR; retrieval enrichment used fallback in the previous run.",
+    "Assignments recorded; individual understanding and completed contributions remain to be confirmed."
+  ],
+  "source_sha256": {
+    "src/experiment_runners.py": "660e91d6d66bd17d68bdfcb7475568823f99a50756b5ac9aad11e4c64a7bea19",
+    "src/experiment_support.py": "8d3e5d38106396606bf3fd7f5e9040142819e04fe7ec8bd3d0cdd3ed60cd6ee7",
+    "src/m1_chunking.py": "40ef4cbe50b31467e14b2ea0082eb3026a05b05e80d0bc87c75c54830e2039aa",
+    "src/m2_search.py": "05166cce7f604169a0e0b2cdc36641f115257929c40461ffad1ba07520576de9",
+    "src/m3_rerank.py": "a55d76a66f7fd3a2f119f5b49efa3c895665e657166b7f9c5d360f6df45a1dec",
+    "src/m4_eval.py": "b2b5ef2a34142d98ba73f48f00a51a0f29fbac4f20019e12651252192be3a4b9",
+    "src/m5_enrichment.py": "df18e65fd00fd80e7aae4290283b9e75bba3a0ec245db8c95c68a96315cec123",
+    "src/phase_a_ragas.py": "6104e58f4bb41d9b6223891ff78656c37e95676734d5cfe9afbefebdf05fe336",
+    "src/phase_b_judge.py": "8ca9ebc001c77e727acb865f17814fe9d4be68ec73e9cf984ba3de299aebea8f",
+    "src/phase_c_guard.py": "86a63f89285f074cd03e87396888159c0b3a15f73dd5db6ff6da761a77dfc432",
+    "src/report_contracts.py": "d2740c4de487b428c989c269d673f370b65e9b0e5074d74ec790bce5369069d6",
+    "src/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scripts/check_lab.py": "c99b990b545690247589a859be3be3ec2ad67fbf3191e756c018ab606bdd5f93",
+    "scripts/check_preclass.py": "47c89d8ab5215f47aca412b6dd046dc0d07d07dfac14cf9227539c7a3d43f354",
+    "scripts/run_experiments.py": "ab608ed81c66f34cb43fa0eaa8d203904744d78e14112e7a0ca19aee72edb519",
+    "scripts/setup_answers.py": "81660bb0c7c7da531d67a1e2d4265e29f065aa39724ce6d4ed4df8b9db21c545",
+    "scripts/__init__.py": "828f113462d32bbcffdf8db1c10aff969010c804cdf3887a163174a096a7266b",
+    "tests/conftest.py": "7613936cd4a4c89d380ce63d7ee892a06d2e51db200a1db9236f90c5142d3459",
+    "tests/test_live_reports.py": "7e4497db41894699c79d8599ae1af37f396424eb6e33d52301bd7b0475b2ec75",
+    "tests/test_phase_a.py": "e1a3c9fe973c52118b1da022163a24ab914d2fbb9e07f3836a9257a44117e58d",
+    "tests/test_phase_b.py": "c8a518858ee8fd3918f7319dd64444f514b8f0f76730d6ea46953537be0c0efd",
+    "tests/test_phase_c.py": "f4fcd2441eb50f6f1e4ded000893195f92d99e942a11e7ab0827b550618ef30f",
+    "tests/test_preclass_pipeline.py": "1c937a01f350f69edb236aee26ae934889be378d6cff509581dd6609e9bccc67",
+    "tests/test_report_contracts.py": "8ba09f507a63323a1471345eb9d985355aec2333479f8c7152253b9948674c23",
+    "tests/test_support.py": "b1f9d3ca9d5cdef03cf56c899f69ba08fb5f1301e54fd2f1e8ba13579706cd4a",
+    "tests/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fixtures/adversarial_set_20.json": "6cb482968ec78947e90844ad7a40ac67f39274d0939507ca661fe42462943575",
+    "fixtures/clean_set_8.json": "d6cf840357436a5f327784bbf91c42b82013315e2661f2456bb223b29a101f10",
+    "fixtures/human_labels_10q.json": "e72338bd99c3d0165348c11997735bbb87c978fe018c24dfd29c9801d5c2b2c1",
+    "fixtures/output_set_4.json": "036a07775b69e6eb4d903039994b3d163f649b47ffed81e670a4b37ba60837f0",
+    "fixtures/test_set_50q.json": "0e87f26e020a32c62ea0864940720618f39600b9d3378193704cf2f86e88446d",
+    "requirements/constraints-core.txt": "d8623c831e60bf13e332f1101668adcfb928cd9b09224d2dab73234ec3615f7f",
+    "requirements/requirements-test.lock.txt": "9123ebb4d2ff5f01037f3f62fe4b5f8f7b9d5f15fcdb5366a61cf13ad090359f",
+    "requirements/requirements-test.txt": "2d319f014219cc067dbb2b2f8f4ca5f18eac3f6af465218346e65c3b1edca4a8",
+    "requirements/requirements.txt": "458a53d674116dfa8017be6e7b08c131310ca0dc022e3da79a6530eb1b7e2976",
+    "config.py": "28de63bbfb6a9fdcdb0818372d2c644c1d336f8b49a3fda3733edbd131422f5a"
+  },
+  "team": {
+    "working_name": "Huy-Dat",
+    "members": [
+      {
+        "name": "Nguyễn Văn Huy",
+        "student_id": "2A202602428",
+        "tasks": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "9a",
+          "10",
+          "12",
+          "integration/submission"
+        ]
+      },
+      {
+        "name": "NguyenQuocDat",
+        "student_id": "2A202602369",
+        "tasks": [
+          "5",
+          "6",
+          "7",
+          "8",
+          "9b",
+          "11"
+        ]
+      }
+    ]
+  },
+  "preparation_snapshot_commit": "48f3fd9"
+}
