@@ -257,7 +257,7 @@ def test_setup_preserves_metadata_and_does_not_call_pipeline_py(monkeypatch):
     returned=setup_answers.build_pipeline()
     assert returned[:2]==(search,reranker)
     chunk=search.index.call_args.args[0][0]
-    assert chunk=={"text":"enriched","metadata":{"source":"policy","parent_id":"parent","topic":"HR"}}
+    assert chunk=={"text":"enriched","metadata":{"source":"policy","parent_id":"parent","original_text":"raw","topic":"HR"}}
 
 
 def test_setup_generation_accepts_reused_client():
