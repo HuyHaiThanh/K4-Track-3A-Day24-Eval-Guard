@@ -10,3 +10,6 @@ nemoguardrails==0.10.0
 openai==1.109.1
 annoy==1.17.3
 numpy==1.26.4
+
+# datasets/RAGAS must remain compatible with the lab NumPy 1.26 pin.
+pyarrow==16.1.0

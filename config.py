@@ -51,3 +51,8 @@ JUDGE_MODEL = "gpt-4o-mini"
 # --- Guardrail latency budget ---
 LATENCY_BUDGET_P95_MS = 500  # Full guard target; Task 12 currently measures input guards only.
 PRESIDIO_LANGUAGE = "en"    # Presidio base language; custom VN recognizers added via PatternRecognizer
+
+# Local inference: bound CPU parallelism and peak RAM on classroom laptops.
+MODEL_CPU_THREADS = 2
+MODEL_BATCH_SIZE = 4
+RERANK_MAX_LENGTH = 512

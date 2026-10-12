@@ -58,11 +58,14 @@ Kiểm tra các lớp riêng biệt để biết lỗi nằm ở đâu:
 
 ```bash
 python -m pip check
-python -c "import ragas, nemoguardrails, presidio_analyzer, spacy; print('imports OK')"
+python -c "import torch; import ragas, nemoguardrails, presidio_analyzer, spacy; print('imports OK')"
 python -m spacy download en_core_web_lg
 docker compose -f infra/docker-compose.yml up -d
 python scripts/setup_answers.py --live
 ```
+
+Trên máy Windows đang kiểm chứng, load PyTorch trước các thư viện NLP giúp tránh
+lỗi khởi tạo DLL WinError 1114. Lệnh import phía trên phản ánh thứ tự đã chạy thành công.
 
 Qdrant dùng tag [v1.9.7](https://github.com/qdrant/qdrant/releases/tag/v1.9.7),
 không dùng `latest`. Setup sẽ tải embedding BGE-M3/reranker theo module bài
