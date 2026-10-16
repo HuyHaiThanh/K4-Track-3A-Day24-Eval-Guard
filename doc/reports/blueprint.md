@@ -8,7 +8,7 @@ Phase A dùng artifacts/ragas_50q.json, timestamp 2026-10-16T02:07:49.789793+00:
 
 Phase B live đã chạy 2026-10-16T04:13:20Z với judge `gpt-4o-mini`: 5/5 pairwise decisions giữ nguyên candidate sau swap; κ=1.00 trên 10 calibration labels. Chi tiết và giới hạn mẫu ở `doc/reports/bias_report.md`, artifact là `artifacts/judge_results.json`.
 
-Phase C code đã tích hợp và offline tests pass; full live `guard_results.json` chưa có. Vì vậy attacks/clean/output pass counts, false-positive rate, guard model IDs và latency thực tế vẫn chưa đo. Chỉ điền các trường đó từ artifact của runner C; không đoán từ `JUDGE_MODEL` hoặc model generation. Tests mock không thay số đo live.
+Phase C live chạy 2026-10-16T05:38:35Z với guard model `gpt-4o-mini`: attacks 19/20, clean 8/8 allowed (false-positive rate 0), output 4/4. Off-topic case 11 bị bỏ lọt. Số đo và raw samples trong `artifacts/guard_results.json`; kết quả phản ánh fixture batch nhỏ, không phải production.
 
 ## Kiến trúc và failure action
 
@@ -39,14 +39,14 @@ Task 12 đã implement thu mẫu, reuse engines, hai warm-up thật rồi đo se
 
 | Layer/scope | P50 | P95 | P99 | Trạng thái |
 |---|---|---|---|---|
-| Presidio | chưa đo | chưa đo | chưa đo | Smoke test chức năng riêng; chưa benchmark |
-| NeMo input | chưa đo | chưa đo | chưa đo | Chờ Phase C live batch |
-| Input guard sequential | chưa đo | chưa đo | chưa đo | Chờ chạy Task 12 với rail thật, ≥20 samples + 2 warm-up |
+| Presidio | 8.1 ms | 10.7 ms | 11.8 ms | 20 samples, input-layer component |
+| NeMo input | 671.2 ms | 914.4 ms | 1066.5 ms | 20 samples, live rail |
+| Input guard sequential | 679.3 ms | 922.3 ms | 1075.5 ms | 20 samples + 2 warm-up; P95 vượt budget 500 ms |
 | RAG | chưa đo | chưa đo | chưa đo | Không suy latency từ thời gian batch evaluation |
 | NeMo output | chưa đo | chưa đo | chưa đo | Chờ task 11; ngoài scope Task 12 |
 | Full guard/request short-circuit | chưa đo | chưa đo | chưa đo | Đo riêng sau tích hợp, không dùng input_guard_ms thay thế |
 
-Budget mục tiêu 500ms; budget_ok hiện chưa xác định. Không sử dụng 2ms/4ms trong tests mock như số đo runtime. Sau khi được phép chạy batch live, dùng runner C `--live --latency-samples 20` một lần; đối chiếu raw samples, scope/model IDs/warm-up rồi điền bảng và bottleneck thật. Nếu đo vượt budget phải ghi số thật và phân tích, không sửa số.
+Budget mục tiêu 500ms; artifact ghi `latency_budget_ok: false`. Không sử dụng 2ms/4ms trong tests mock như số đo runtime. P95 chủ yếu đến từ NeMo input (914.4 ms); tổng scope tuần tự là 922.3 ms. Chỉ số này đo input layers và không đại diện latency RAG, output rail hoặc full request.
 
 ## CI gates đề xuất
 
@@ -67,4 +67,4 @@ Lấy mẫu đánh giá có reference, human review cho các case bất đồng 
 - Q9: nguồn đã có nhưng generation từ chối; kiểm span liên quan trước nói không tìm thấy.
 - Q28/Q31/Q38: đối chiếu NLI/arithmetic trace hoặc human labels khi faithfulness thấp nhưng phép tính được hỗ trợ; không sửa score bằng tay.
 - Kiểm clean controls song song attacks để phát hiện always-block và chặn nhầm tên công nghệ/khung lương.
-- Sau Phase C live batch, ghi kết quả attacks, clean, output và latency thật; blueprint là đề xuất monitoring, không phải bằng chứng đã deploy.
+- Phase C live batch đã ghi kết quả attacks, clean, output và latency trong artifact; blueprint vẫn là đề xuất monitoring, không phải bằng chứng đã deploy.
