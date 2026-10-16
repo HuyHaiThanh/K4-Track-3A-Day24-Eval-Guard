@@ -36,7 +36,7 @@ git add src/phase_b_judge.py
 git push -u origin dat/phase-b-rails
 ~~~
 
-Lệnh git add ở ví dụ chỉ chọn Phase B; stage các file Phase C/report thực sự hoàn thành trong commit riêng. Huy review/merge branch của Đạt rồi nhóm chạy batch live một lần trên bản đã tích hợp. Nếu Đạt chưa có quyền push, Huy cần thêm tài khoản GitHub của Đạt vào collaborators; họ tên/MSSV không xác định được tài khoản GitHub để cấp quyền.
+Lệnh git add ở ví dụ chỉ chọn Phase B; các file Phase C/report đã tích hợp riêng trên nhánh `dat`. Sau khi merge cập nhật Phase A, batch Phase C live đã chạy trên bản tích hợp và được ghi trong `artifacts/guard_results.json`. Chưa push lên GitHub; nếu Đạt chưa có quyền push, Huy cần thêm tài khoản GitHub của Đạt vào collaborators; họ tên/MSSV không xác định được tài khoản GitHub để cấp quyền.
 
 ## Bản chuẩn bị đã commit
 

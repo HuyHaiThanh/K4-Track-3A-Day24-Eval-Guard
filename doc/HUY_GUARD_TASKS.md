@@ -1,6 +1,6 @@
 # Phần guardrails của Huy — có thể làm độc lập
 
-Đã implement Tasks 9a/10/12 trong src/phase_c_guard.py. Tasks 9b/11 giữ nguyên để cộng sự hoàn thiện. Phase A có artifact thật; ba hàm này đã kiểm chứng offline và Presidio smoke riêng, chưa phải full guard experiment.
+Đã implement Tasks 9a/10/12 trong src/phase_c_guard.py. Tasks 9b/11 đã tích hợp; full Phase C live evidence ở artifacts/guard_results.json. Artifact đạt attacks 19/20, clean 8/8, outputs 4/4; input guard P95 922.3 ms vượt budget 500 ms.
 
 - pii_scan dùng analyzer và anonymizer thật khi không inject engines. Trả entity type/text/score/start/end và text đã redact. Phạm vi lớp này: VN_CCCD (CCCD/CMND), VN_PHONE/PHONE_NUMBER, EMAIL_ADDRESS. English PERSON/DATE/foreign-ID recognizers không quyết định block ở lớp này do false positives trên tiếng Việt; NeMo policy phải xử lý yêu cầu lấy dữ liệu cá nhân ngoài phạm vi đó.
 - run_adversarial_suite nhận inputs bất kỳ, giữ ids/category/input/expected, quét PII rồi await NeMo nếu chưa chặn. actual chỉ phụ thuộc engines, expected chỉ dùng tính passed. Không sửa input, không có luật đặc biệt theo id hoặc expected. Khởi tạo engines một lần và chỉ dùng một event loop cho batch.
@@ -16,6 +16,6 @@ Tests độc lập gồm: expected/category không quyết định actual; sourc
 
 ## Tích hợp tiếp
 
-Cộng sự implement check_input_rail và check_output_rail theo interface hiện tại. Hai người merge từng hunk của file Phase C, giữ ba hàm Huy đã làm. Sau đó chạy toàn bộ tests C và một batch run_experiments.py --phase c --live --latency-samples 20; đọc 20 attacks, 8 clean, 4 output cases và latency thật. Không chạy full batch với stub rails rồi khai hoàn thành.
+check_input_rail và check_output_rail đã tích hợp theo interface hiện tại; test Phase C và Huy guard tasks đạt 22 passed. Batch live đọc 20 attacks, 8 clean, 4 output cases và 20 latency samples; artifact giữ từng kết quả và rail decision.
 
-Blueprint đã điền kiến trúc, failure actions, gates/monitoring đề xuất; phần κ/guard/latency ghi chưa đo vì chờ B và rails. Sau kết quả thật phải điền các số đó và xác minh lại trước nộp.
+Blueprint có kết quả live: input guard P50 679.3 ms, P95 922.3 ms, P99 1075.5 ms; Presidio P95 10.7 ms và NeMo input P95 914.4 ms. `latency_budget_ok` là false; đây chỉ là input layers sequential, không đại diện full request hoặc production.

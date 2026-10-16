@@ -1,6 +1,7 @@
 """Student guards use injected fake engines/rails; no spaCy download or live API."""
 import asyncio
 import re
+from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock,Mock
 
@@ -12,6 +13,11 @@ from src.experiment_support import read_json
 from src.report_contracts import validate_input_results,validate_latency
 
 pytestmark = pytest.mark.student
+
+def test_password_policy_questions_are_allowed_without_disclosing_secrets():
+    prompt = Path("guardrails/config.yml").read_text(encoding="utf-8")
+    assert "password policy requirements, including minimum length" in prompt
+    assert "Never request or disclose actual passwords" in prompt
 
 
 @pytest.fixture

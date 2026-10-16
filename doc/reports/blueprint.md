@@ -6,13 +6,32 @@ Người tổng hợp: Nguyễn Văn Huy — 2A202602428, có Codex hỗ trợ. 
 
 Phase A dùng artifacts/ragas_50q.json, timestamp 2026-10-16T02:07:49.789793+00:00; generation gpt-4o-mini-2024-07-18, evaluator gpt-4o-mini + text-embedding-3-small. Overall avg_score 0.8131, nhóm yếu multi_hop 0.7591. Answers/fixture giữ nguyên hashes trong metadata.
 
-Phase B, NeMo input/output và guard_results.json chưa có kết quả thật. Guard model IDs chỉ được ghi từ instances thực sự chạy sau tích hợp; không đoán từ JUDGE_MODEL hoặc generation. Cohen κ, attacks/clean/output pass counts và false-positive rate: chưa đo. Tests mock không thay các số này.
+Phase B live đã chạy 2026-10-16T04:13:20Z với judge `gpt-4o-mini`: 5/5 pairwise decisions giữ nguyên candidate sau swap; κ=1.00 trên 10 calibration labels. Chi tiết và giới hạn mẫu ở `doc/reports/bias_report.md`, artifact là `artifacts/judge_results.json`.
+
+Phase C live chạy 2026-10-16T05:38:35Z với guard model `gpt-4o-mini`: attacks 19/20, clean 8/8 allowed (false-positive rate 0), output 4/4. Off-topic case 11 bị bỏ lọt. Số đo và raw samples trong `artifacts/guard_results.json`; kết quả phản ánh fixture batch nhỏ, không phải production.
 
 ## Kiến trúc và failure action
 
 Request: input → Presidio → NeMo input → RAG → NeMo output → response. PII được phát hiện/redact trước xử lý tiếp; suite lab chặn input có PII. Nếu PII chặn thì request thật không cần gọi NeMo. NeMo quyết định từ activated rails; không dùng từ khóa xin lỗi/không thể để suy ra blocked. Output sạch giữ nguyên; output nhạy cảm được thay/redact bởi output rail.
 
-Lỗi engine/API phải được truyền lên caller và xử lý fail-closed (thông báo dịch vụ tạm không sẵn sàng), không tự coi allowed/safe. Prompt không được nhận human_label/human_note khi calibration. Secrets ở .env/biến môi trường, không commit. Log production chỉ giữ request ID, entity types/counts, quyết định/timing và model/source version; không lưu raw PII, context hay key. Raw PII trong pii_smoke.json chỉ là các chuỗi fixture giả lập của lab.
+Failure actions / monitoring (đề xuất, chưa triển khai hoặc chạy): nếu một rail chặn,
+dừng request và không chuyển nội dung bị chặn sang bước sau. Lỗi engine/API phải được
+truyền lên caller và xử lý fail-closed với thông báo dịch vụ tạm không sẵn sàng; không tự
+coi allowed/safe hoặc bỏ qua guard. Chỉ cân nhắc fallback sau review rủi ro và quyết định
+có ghi nhận.
+
+Prompt calibration không nhận `human_label`/`human_note`. Secrets lấy từ `.env` hoặc biến
+môi trường và không commit. Log production chỉ giữ request ID đã khử định danh, stage,
+entity types/counts, quyết định, timing và model/source version; không lưu raw PII, prompt,
+answer, context hay key. `artifacts/pii_smoke.json` chỉ chứa chuỗi PII giả lập trong fixture.
+
+Theo dõi tỷ lệ allow/block theo stage, engine/API errors và timeout, latency p50/p95/p99,
+false-positive rate trên clean controls và drift theo model/source hashes. Cảnh báo khi
+ngưỡng CI hoặc ngưỡng vận hành đã được nhóm thống nhất bị vi phạm. Lấy mẫu định kỳ theo
+chính sách lưu giữ, review false positives với người phụ trách guard, rồi chỉ đổi
+rule/prompt/model sau khi chạy lại attacks, clean controls và review drift. Ngưỡng vận
+hành, retention, reviewer và kênh cảnh báo còn phải được nhóm xác định; chưa triển khai
+monitoring production.
 
 ## Phạm vi latency và trạng thái
 
@@ -20,14 +39,14 @@ Task 12 đã implement thu mẫu, reuse engines, hai warm-up thật rồi đo se
 
 | Layer/scope | P50 | P95 | P99 | Trạng thái |
 |---|---|---|---|---|
-| Presidio | chưa đo | chưa đo | chưa đo | Smoke test chức năng riêng; chưa benchmark |
-| NeMo input | chưa đo | chưa đo | chưa đo | Chờ task 9b |
-| Input guard sequential | chưa đo | chưa đo | chưa đo | Chờ chạy Task 12 với rail thật, ≥20 samples + 2 warm-up |
+| Presidio | 8.1 ms | 10.7 ms | 11.8 ms | 20 samples, input-layer component |
+| NeMo input | 671.2 ms | 914.4 ms | 1066.5 ms | 20 samples, live rail |
+| Input guard sequential | 679.3 ms | 922.3 ms | 1075.5 ms | 20 samples + 2 warm-up; P95 vượt budget 500 ms |
 | RAG | chưa đo | chưa đo | chưa đo | Không suy latency từ thời gian batch evaluation |
 | NeMo output | chưa đo | chưa đo | chưa đo | Chờ task 11; ngoài scope Task 12 |
 | Full guard/request short-circuit | chưa đo | chưa đo | chưa đo | Đo riêng sau tích hợp, không dùng input_guard_ms thay thế |
 
-Budget mục tiêu 500ms; budget_ok hiện chưa xác định. Không sử dụng 2ms/4ms trong tests mock như số đo runtime. Khi rails hoàn thiện, chạy runner C --live --latency-samples 20 một lần; đối chiếu raw samples, scope/model IDs/warm-up rồi điền bảng và bottleneck thật. Nếu đo vượt budget phải ghi số thật và phân tích, không sửa số.
+Budget mục tiêu 500ms; artifact ghi `latency_budget_ok: false`. Không sử dụng 2ms/4ms trong tests mock như số đo runtime. P95 chủ yếu đến từ NeMo input (914.4 ms); tổng scope tuần tự là 922.3 ms. Chỉ số này đo input layers và không đại diện latency RAG, output rail hoặc full request.
 
 ## CI gates đề xuất
 
@@ -48,4 +67,4 @@ Lấy mẫu đánh giá có reference, human review cho các case bất đồng 
 - Q9: nguồn đã có nhưng generation từ chối; kiểm span liên quan trước nói không tìm thấy.
 - Q28/Q31/Q38: đối chiếu NLI/arithmetic trace hoặc human labels khi faithfulness thấp nhưng phép tính được hỗ trợ; không sửa score bằng tay.
 - Kiểm clean controls song song attacks để phát hiện always-block và chặn nhầm tên công nghệ/khung lương.
-- Sau tích hợp rails, ghi đủ kết quả output, κ và latency thực tế; blueprint hiện chưa phải bằng chứng hoàn thành Phase B/C.
+- Phase C live batch đã ghi kết quả attacks, clean, output và latency trong artifact; blueprint vẫn là đề xuất monitoring, không phải bằng chứng đã deploy.
