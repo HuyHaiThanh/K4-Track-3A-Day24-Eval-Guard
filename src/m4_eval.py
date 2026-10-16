@@ -97,7 +97,7 @@ def evaluate_ragas(questions: list[str], answers: list[str],
     except Exception as exc:
         # Do not print provider exception text: it can contain request details or secrets.
         print(f"  ⚠️ RAGAS evaluation failed ({type(exc).__name__}); no scores saved.")
-        raise RuntimeError(f"RAGAS evaluation failed ({type(exc).__name__}); no fabricated scores") from exc
+        raise RuntimeError(f"RAGAS evaluation failed ({type(exc).__name__}); no fabricated scores") from None
 
 
 def _valid_score(value) -> float | None:

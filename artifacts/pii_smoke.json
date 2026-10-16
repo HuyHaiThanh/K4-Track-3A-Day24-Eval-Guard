@@ -1,0 +1,122 @@
+{
+  "scope": "local_presidio_only_not_full_guard",
+  "synthetic_cases": [
+    {
+      "case": "cccd",
+      "expected_entity": "VN_CCCD",
+      "entities": [
+        {
+          "type": "VN_CCCD",
+          "text": "034095001234",
+          "score": 0.9,
+          "start": 5,
+          "end": 17
+        },
+        {
+          "type": "PHONE_NUMBER",
+          "text": "034095001234",
+          "score": 0.4,
+          "start": 5,
+          "end": 17
+        }
+      ],
+      "anonymized": "CCCD <VN_CCCD>",
+      "passed": true
+    },
+    {
+      "case": "cmnd",
+      "expected_entity": "VN_CCCD",
+      "entities": [
+        {
+          "type": "VN_CCCD",
+          "text": "012345678",
+          "score": 0.7,
+          "start": 5,
+          "end": 14
+        }
+      ],
+      "anonymized": "CMND <VN_CCCD>",
+      "passed": true
+    },
+    {
+      "case": "phone",
+      "expected_entity": "VN_PHONE",
+      "entities": [
+        {
+          "type": "VN_PHONE",
+          "text": "0987654321",
+          "score": 0.9,
+          "start": 4,
+          "end": 14
+        },
+        {
+          "type": "PHONE_NUMBER",
+          "text": "0987654321",
+          "score": 0.4,
+          "start": 4,
+          "end": 14
+        }
+      ],
+      "anonymized": "SĐT <VN_PHONE>",
+      "passed": true
+    },
+    {
+      "case": "email",
+      "expected_entity": "EMAIL_ADDRESS",
+      "entities": [
+        {
+          "type": "EMAIL_ADDRESS",
+          "text": "test@company.com",
+          "score": 1.0,
+          "start": 6,
+          "end": 22
+        }
+      ],
+      "anonymized": "Email <EMAIL_ADDRESS>",
+      "passed": true
+    }
+  ],
+  "clean_controls": [
+    {
+      "id": 101,
+      "has_pii": false,
+      "entity_types": []
+    },
+    {
+      "id": 102,
+      "has_pii": false,
+      "entity_types": []
+    },
+    {
+      "id": 103,
+      "has_pii": false,
+      "entity_types": []
+    },
+    {
+      "id": 104,
+      "has_pii": false,
+      "entity_types": []
+    },
+    {
+      "id": 105,
+      "has_pii": false,
+      "entity_types": []
+    },
+    {
+      "id": 106,
+      "has_pii": false,
+      "entity_types": []
+    },
+    {
+      "id": 107,
+      "has_pii": false,
+      "entity_types": []
+    },
+    {
+      "id": 108,
+      "has_pii": false,
+      "entity_types": []
+    }
+  ],
+  "nemo_executed": false
+}
