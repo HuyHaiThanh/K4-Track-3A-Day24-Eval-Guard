@@ -18,10 +18,14 @@ from src.experiment_support import write_json
 Distribution = str  # "factual" | "multi_hop" | "adversarial"
 
 DIAGNOSTIC_TREE = {
-    "faithfulness":      ("LLM hallucinating", "Tighten system prompt, lower temperature"),
-    "context_recall":    ("Missing relevant chunks", "Improve chunking or add BM25"),
-    "context_precision": ("Too many irrelevant chunks", "Add reranking or metadata filter"),
-    "answer_relevancy":  ("Answer doesn't match question", "Improve prompt template"),
+    "faithfulness": ("Kiểm tra các khẳng định/điều kiện trong answer có được nguồn hỗ trợ",
+                     "Đối chiếu từng claim với nguồn; trả lời rõ phần chưa có dữ liệu thay vì suy đoán"),
+    "answer_relevancy": ("Kiểm tra answer có đáp ứng từng ý, đại lượng và điều kiện được hỏi",
+                         "Tách các ý cần trả lời; kiểm tra mỗi ý có context trước generation"),
+    "context_precision": ("Kiểm tra thứ tự và mức liên quan của từng context được lấy",
+                          "Review RRF/rerank, giảm parent trùng chủ đề và ưu tiên nguồn phù hợp câu hỏi"),
+    "context_recall": ("Kiểm tra coverage của contexts so với các ý trong reference",
+                       "Truy xuất theo từng ý của câu hỏi nhiều bước và đa dạng nguồn trước chọn top-k"),
 }
 
 
@@ -174,31 +178,21 @@ def run_ragas_50q(answers: list[dict]) -> RagasEvaluation:
 def _diagnose(result: RagasResult) -> tuple[str, str]:
     """Evidence-linked investigation hints, not an automatic root-cause verdict."""
     metric = result.worst_metric
-    directions = {
-        "faithfulness": ("Kiểm tra các khẳng định/điều kiện trong answer có được nguồn hỗ trợ",
-                         "Đối chiếu từng claim với nguồn; trả lời rõ phần chưa có dữ liệu thay vì suy đoán"),
-        "answer_relevancy": ("Kiểm tra answer có đáp ứng từng ý, đại lượng và điều kiện được hỏi",
-                             "Tách các ý cần trả lời; kiểm tra mỗi ý có context trước generation"),
-        "context_precision": ("Kiểm tra thứ tự và mức liên quan của từng context được lấy",
-                              "Review RRF/rerank, giảm parent trùng chủ đề và ưu tiên nguồn phù hợp câu hỏi"),
-        "context_recall": ("Kiểm tra coverage của contexts so với các ý trong reference",
-                           "Truy xuất theo từng ý của câu hỏi nhiều bước và đa dạng nguồn trước chọn top-k"),
-    }
-    hint, fix = directions[metric]
-    joined = "\n".join(result.contexts)
+    hint, fix = DIAGNOSTIC_TREE[metric]
     titles = [line.lstrip("# ").strip() for c in result.contexts
               for line in c.splitlines() if line.startswith("# ")]
     evidence = f"Q{result.question_id}: {result.question} Answer: {result.answer[:240]}"
     evidence += f" Contexts={len(result.contexts)}; nguồn: {', '.join(dict.fromkeys(titles)) or 'xem per_question.contexts'}."
-    versions = "2023" in joined and "2024" in joined
+    versions = (any("2023" in title for title in titles)
+                and any("2024" in title for title in titles))
     if versions:
         evidence += " Contexts chứa cả 2023/2024; cần đọc trạng thái/thay thế, không suy ra bản áp dụng từ điểm."
         fix += "; giữ policy cũ trong corpus, xác định bản áp dụng từ hiệu lực/thay thế của nguồn"
-    reference_numbers = set(re.findall(r"\d+(?:[.,]\d+)?", result.ground_truth))
-    context_numbers = set(re.findall(r"\d+(?:[.,]\d+)?", joined))
-    missing = sorted(reference_numbers - context_numbers)
-    if missing:
-        evidence += f" Chuỗi số reference chưa xuất hiện nguyên dạng trong contexts: {', '.join(missing)} (dấu hiệu coverage, cần đọc lại cách diễn đạt)."
+    if "tổng" in result.question.lower() or (
+            re.search(r"\d", result.question) and any(
+                word in result.question.lower() for word in ("triệu", "đêm", "phạt"))):
+        evidence += (" Câu có yếu tố tính toán: kiểm tra dữ kiện từ question và quy tắc trong contexts; "
+                     "kết quả suy ra không cần xuất hiện nguyên dạng trong tài liệu.")
     diagnosis = f"{metric}={getattr(result, metric):.4f} là chỉ báo điều tra. {hint}. {evidence} Chưa kết luận nguyên nhân chỉ từ metric."
     return diagnosis, fix
 

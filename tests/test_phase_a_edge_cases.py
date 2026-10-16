@@ -73,3 +73,13 @@ def test_empty_distributions_are_excluded_and_ties_are_stable():
     r1 = phase.RagasResult(1, "adversarial", "another question", "answer", ["context"], "reference", .5,.5,.5,.5)
     assert [x["question_id"] for x in phase.bottom_10([r, r1])] == [1, 2]
     assert phase.bottom_10([]) == []
+
+
+def test_diagnosis_does_not_treat_computed_totals_as_missing_retrieval():
+    r = phase.RagasResult(31, "multi_hop", "Khách sạn 2 đêm, thanh toán bao nhiêu?",
+                         "2.400.000 VNĐ", ["# Chính sách 2024\n1.200.000 VNĐ/đêm; sửa từ năm 2023."],
+                         "2.400.000 VNĐ", 0,.5,1,1)
+    row = phase.bottom_10([r])[0]
+    assert "kết quả suy ra không cần xuất hiện" in row["diagnosis"]
+    assert "Chuỗi số reference chưa xuất hiện" not in row["diagnosis"]
+    assert "Contexts chứa cả 2023/2024" not in row["diagnosis"]
