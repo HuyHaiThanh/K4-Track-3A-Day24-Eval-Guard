@@ -8,7 +8,7 @@ Trưởng nhóm/người nộp được phân công: Nguyễn Văn Huy — 2A202
 
 Ngày lab/deadline áp dụng: {{Ngày giờ theo thông báo lớp}} — Asia/Ho_Chi_Minh (UTC+07:00)
 
-Commit dùng để chấm: chưa chốt bản nộp cuối. Snapshot chuẩn bị pipeline/answers: `48f3fd9`; các phase còn TODO.
+Commit dùng để chấm: chưa chốt bản nộp cuối. Snapshot chuẩn bị pipeline/answers: `48f3fd9`; Phase A đã có evidence; Phase B và NeMo rails đang chờ tích hợp.
 
 Mỗi nhóm nộp một repo. Điền đủ thành viên và một mục INDIVIDUAL cho từng người.
 Thêm/xóa rows để khớp nhóm thật; mẫu ba rows không ép nhóm phải có ba người.
@@ -17,7 +17,7 @@ Thêm/xóa rows để khớp nhóm thật; mẫu ba rows không ép nhóm phải
 
 | STT | Họ và tên | MSSV | Vai trò / công việc thật | Bằng chứng |
 |---|---|---|---|---|
-| 1 | Nguyễn Văn Huy | 2A202602428 | Được giao: Phase A (Tasks 1–4); Phase C Tasks 9a, 10, 12; tích hợp và nộp bài. TODO chưa implement tại checkpoint. | tests/test_phase_a.py; các tests PII/suite/latency trong tests/test_phase_c.py; commit cá nhân bổ sung sau khi làm |
+| 1 | Nguyễn Văn Huy | 2A202602428 | Được giao: Phase A (Tasks 1–4); Phase C Tasks 9a, 10, 12; tích hợp và nộp bài. Đã hoàn thiện A và source/tests 9a/10/12 có AI hỗ trợ; full C đang chờ rails. | artifacts/ragas_50q.json; failure_clusters.md; tests/test_huy_guard_tasks.py; pii_smoke.json |
 | 2 | NguyenQuocDat | 2A202602369 | Được giao: Phase B (Tasks 5–8); Phase C Tasks 9b, 11; phối hợp blueprint/review. TODO chưa implement tại checkpoint. | tests/test_phase_b.py; các tests input/output rails trong tests/test_phase_c.py; commit cá nhân bổ sung sau khi làm |
 
 Người tích hợp/chạy batch/nộp link được giao: Nguyễn Văn Huy. Dat review judge và
@@ -72,8 +72,8 @@ answers/evidence `48f3fd9`. Nhóm dùng chung nhánh main và review khi tích h
 ### NguyenVanHuy-2A202602428
 
 - Phần được giao: Tasks 1–4; pii_scan (9a), run_adversarial_suite (10), measure_p95_latency (12); tổng hợp failure_clusters.md và blueprint.md, kiểm tra/nộp repo chung.
-- Trạng thái thực tế tại checkpoint: các hàm student vẫn TODO; chưa khai đã implement hoặc có commit cá nhân.
-- Bằng chứng hiện có của repo: artifacts/answers_50q.json, artifacts/preclass_environment.json, artifacts/readiness_checkpoint.json. Bằng chứng cá nhân sẽ bổ sung sau khi làm.
+- Trạng thái cập nhật 16/10: Phase A đã implement và chạy RAGAS thật; Tasks 9a/10/12 đã implement và kiểm thử với Codex hỗ trợ. Presidio có smoke thật; full C/latency thật còn chờ 9b/11.
+- Bằng chứng: artifacts/ragas_50q.json, doc/reports/failure_clusters.md, tests/test_huy_guard_tasks.py, artifacts/pii_smoke.json, doc/HUY_GUARD_TASKS.md; lịch sử commit phần của Huy. Không khai results B/C khi chưa chạy thật.
 - Cách kiểm tra phần được giao: tests/test_phase_a.py; tests PII/suite/latency trong tests/test_phase_c.py; runner A/C thật sau khi implement.
 - Điều cần giải thích: evaluator metadata; nhóm yếu theo mean; expected không quyết định actual; hai warm-up ngoài samples và scope input layers.
 - Điều đã học và đóng góp đã hoàn thành: chưa được học viên xác nhận; cập nhật bằng nội dung thực tế sau khi làm.

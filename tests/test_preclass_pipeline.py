@@ -76,8 +76,9 @@ def test_ragas_reports_models_passed_to_evaluation(monkeypatch):
     assert evaluate.call_args.kwargs["embeddings"]["model"] == "evaluator-embedding"
     assert result["per_question"][0].faithfulness == .7
     metric_row["faithfulness"] = float("nan")
-    with pytest.raises(RuntimeError):
+    with pytest.raises(RuntimeError) as failure:
         m4.evaluate_ragas(["Q"], ["A"], [["C"]], ["GT"])
+    assert failure.value.__suppress_context__ is True
 
 
 def test_empty_generation_is_explicit_extractive_fallback():
