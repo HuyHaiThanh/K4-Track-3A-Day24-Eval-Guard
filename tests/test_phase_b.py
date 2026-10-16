@@ -17,6 +17,18 @@ def test_pairwise_uses_json_judge(openai_client):
     assert REF in str(call["messages"])
     assert call["response_format"] == {"type":"json_object"}
 
+@pytest.mark.parametrize("payload", [
+    {"winner": "C", "reasoning": "bad", "scores": {"A": .5, "B": .5}},
+    {"winner": "A", "reasoning": "bad", "scores": {"A": 1.1, "B": .5}},
+    {"winner": "A", "reasoning": "bad", "scores": {"A": .5}},
+])
+def test_pairwise_rejects_invalid_judge_response(openai_client, payload):
+    import json
+
+    openai_client.chat.completions.create.return_value.choices[0].message.content = json.dumps(payload)
+    with pytest.raises(ValueError):
+        phase.pairwise_judge(Q, A, B, reference=REF)
+
 
 @pytest.mark.parametrize("second_raw,expected,consistent", [("B","A",True),("A","tie",False)])
 def test_swap_conversion_and_calls(monkeypatch,second_raw,expected,consistent):
@@ -38,6 +50,11 @@ def test_swap_conversion_and_calls(monkeypatch,second_raw,expected,consistent):
     ([1,1,0,0],[1,0,1,0],0)])
 def test_kappa_exact(judge,human,expected):
     assert phase.cohen_kappa(judge,human) == pytest.approx(expected)
+
+@pytest.mark.parametrize("judge,human", [([0, 2], [0, 1]), ([True], [1]), ([0], [0, 1])])
+def test_kappa_rejects_invalid_labels(judge, human):
+    with pytest.raises(ValueError):
+        phase.cohen_kappa(judge, human)
 
 
 def test_bias_known_counts():

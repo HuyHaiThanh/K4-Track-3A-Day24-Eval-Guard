@@ -14,7 +14,21 @@ Models generation/evaluator/judge từ A/B: {{models theo từng vai trò và ng
 Input → Presidio → NeMo input → RAG → NeMo output → response.
 Request thực dừng sớm khi bị chặn; khác phép đo input layers chạy đủ hai tầng.
 
-{{Mô tả data flow, failure action, log/redact, nơi giữ secrets và điều kiện fallback.}}
+Failure actions / monitoring (đề xuất, chưa triển khai hoặc chạy): request thực đi lần lượt
+qua Presidio, NeMo input, RAG và NeMo output; nếu một rail chặn, dừng request và không
+chuyển nội dung bị chặn sang bước sau. Nếu guard/provider lỗi hoặc timeout, fail closed
+cho luồng nhạy cảm, trả lỗi an toàn và không tự bỏ qua guard; chỉ cân nhắc fallback sau
+đánh giá rủi ro và quyết định có ghi nhận. Không ghi prompt/answer thô hoặc secrets vào
+logs; lưu tối thiểu timestamp, stage, decision, rule/model version, latency và request ID
+đã khử định danh, với quyền truy cập hạn chế. Secrets lấy từ môi trường triển khai, không
+đưa vào artifact hay báo cáo.
+
+Theo dõi tỷ lệ allow/block theo stage, lỗi/timeout, latency p50/p95/p99 và false-positive
+qua tập clean có nhãn; cảnh báo khi ngưỡng CI hoặc ngưỡng vận hành được nhóm chốt bị vi phạm.
+Lấy mẫu định kỳ từ traffic đã khử định danh theo chính sách lưu giữ, review false positives
+với người phụ trách guard, rồi điều chỉnh rule/prompt/model chỉ qua bộ hồi quy attacks,
+clean controls và review drift. Các ngưỡng vận hành, retention, reviewer và kênh cảnh báo
+còn phải được nhóm xác định. Chưa có metrics hay kết quả live để báo cáo.
 
 ## Phạm vi và số đo latency
 

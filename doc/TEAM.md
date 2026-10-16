@@ -82,12 +82,12 @@ answers/evidence `48f3fd9`. Nhóm dùng chung nhánh main và review khi tích h
 ### NguyenQuocDat-2A202602369
 
 - Phần được giao: Tasks 5–8; check_input_rail (9b), check_output_rail (11); bias_report.md và phần failure actions/monitoring trong blueprint phối hợp với Huy.
-- Trạng thái thực tế tại checkpoint: các hàm student vẫn TODO; chưa khai đã implement hoặc có commit cá nhân.
-- Bằng chứng cá nhân: bổ sung commit/source/report sau khi làm; chưa có bằng chứng implementation ở checkpoint này.
-- Cách kiểm tra phần được giao: tests/test_phase_b.py; test_input_uses_rail_decision và test_output_checks_supplied_answer trong tests/test_phase_c.py; runner B/C thật sau khi implement.
-- Điều cần giải thích: quy đổi winner/scores sau swap; A/B/tie khác label 0/1; không leak human labels; đọc activated rails thay vì từ khóa refusal.
-- Điều đã học và đóng góp đã hoàn thành: chưa được học viên xác nhận; cập nhật bằng nội dung thực tế sau khi làm.
-- Nguồn/AI hỗ trợ: Codex hỗ trợ lập checklist/phân công; tự kiểm chứng phần được giao trước khi khai đóng góp.
+  - Trạng thái code: Tasks 5–8 và rails 9b/11 đã được implement với hỗ trợ Codex. Unit checks phần được giao: `tests/test_phase_b.py` cùng `test_input_uses_rail_decision` và `test_output_checks_supplied_answer` trong `tests/test_phase_c.py` đạt 18 passed.
+  - Trạng thái đánh giá: Phase B live đã sinh `artifacts/judge_results.json` ngày 2026-10-16; `validate_phase_b` xác nhận 5 cặp, 10 calibration rows và đúng fixtures. `bias_report.md` ghi kết quả artifact này. Phase C runner chưa chạy vì các TODO PII/input-batch/latency ngoài phân công Đạt vẫn chặn kiểm tra hoàn thành. Blueprint chỉ ghi đề xuất failure actions/monitoring, workflow chưa được triển khai.
+  - Kiểm tra rộng: `python -m pytest -q --tb=no` chưa đạt (14 failed, 33 errors, 54 passed, 3 deselected); các lỗi quan sát được gồm Phase A, PII/input batch/latency Phase C và report/preclass fixtures, ngoài hai rail 9b/11 được giao.
+- Điều cần giải thích khi báo cáo: quy đổi winner/scores sau swap; A/B/tie khác label 0/1; không leak human labels; đọc quyết định rail thay vì suy từ từ khóa refusal.
+- Điều đã học và đóng góp đã hoàn thành: chưa được học viên cung cấp; cần cập nhật bằng nội dung thực tế của học viên.
+  - Nguồn/AI hỗ trợ: Codex hỗ trợ implementation, cập nhật báo cáo và kiểm tra offline; nội dung học được cá nhân chưa được học viên cung cấp.
 
 ## Cập nhật sau khi nộp
 
